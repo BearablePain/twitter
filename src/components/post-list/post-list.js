@@ -1,5 +1,7 @@
 import React from "react";
 import PostListItem from "../post-list-item/post-list-item";
+import { ListGroup, ListGroupItem } from 'reactstrap';
+
 import "./post-list.css";
 //передаем пропсы. получает их с самого верхнего уровня
 // app.js который будет получать данные  c сервера и записывать их в переменную
@@ -16,20 +18,20 @@ const PostList = ({ posts }) => {
     // раскладываем объект итем на несколько переменных с помощью декструлизации
     const {id, ...itemProps} = item
     return ( 
-    <li key = {id} className="list-groop-item ">
+    <ListGroupItem key = {id} className="list-groop-item ">
      <PostListItem {...itemProps} />
      {/* тоже саое что и снизу }
       {/* <PostListItem label={item.label} important={item.important} /> */}
-    </li> 
+    </ListGroupItem> 
     )
 });
 
   return (
-    <ul className="app-list list-group">
+    <ListGroup className="app-list">
       {/* Добавляем пропсы содержимое поста - label(текст) 
     импорт (важное) */}
       {elements}
-    </ul>
+    </ListGroup>
   );
 };
 
