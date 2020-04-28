@@ -1,11 +1,14 @@
 import React from "react";
-import './post-status-filter.css'
+import "./post-status-filter.css";
 
 const postStatusFilter = () => {
   return (
     <div className="btn-group">
-     <button> Все </button>
-     <button > Понравилось</button>
+    {/* Стили подтягиваются с бутсрэп сдн */}
+      <button type="button" className="btn brn-info">
+        Все
+      </button>
+      <button className="btn">Понравилось</button>
     </div>
   );
 };
