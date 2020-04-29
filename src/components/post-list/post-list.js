@@ -5,7 +5,7 @@ import { ListGroup, ListGroupItem } from 'reactstrap';
 import "./post-list.css";
 //передаем пропсы. получает их с самого верхнего уровня
 // app.js который будет получать данные  c сервера и записывать их в переменную
-const PostList = ({ posts }) => {
+const PostList = ({ posts, onDelete  }) => {
   //перебираем  и формируем каждый элемент из входящего массива
   //переменная элементс формируется путем перебора постов
 // 
@@ -19,7 +19,11 @@ const PostList = ({ posts }) => {
     const {id, ...itemProps} = item
     return ( 
     <ListGroupItem key = {id} className="list-groop-item ">
-     <PostListItem {...itemProps} />
+     <PostListItem {...itemProps} 
+       //здесь она захватывает id который получался при создание 
+      //  и поднимается еще выше в app
+       onDelete={() => onDelete(id)}
+     />
      {/* тоже саое что и снизу }
       {/* <PostListItem label={item.label} important={item.important} /> */}
     </ListGroupItem> 

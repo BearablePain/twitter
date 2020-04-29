@@ -37,7 +37,7 @@ like: false
     // this.props это свойство которое будет приходить в
     //каждый новосозданный компонент postlistitems
     //импортент получаем из state
-    const { label } = this.props;
+    const { label, onDelete } = this.props;
     const {important} = this.state;
     const {like} = this.state;
     // динамически изменяем классы
@@ -61,11 +61,17 @@ like: false
           <button 
           type="button" 
           className="btn-star btn-sm"
-          //создаем об события для "звездочки"
+          //создаем об. события для "звездочки"
            onClick={this.onImportant}>
             <i className="fa fa-star"></i>
           </button>
-          <button type="submit" className="btn-trash btn-sm">
+          <button type="submit"
+           className="btn-trash btn-sm"
+          //  Ставим обработчик для удаление постлиститем 
+          // Будет приходить из пропсов постлиститема
+          //когда кликаем вызывается функция onDelete 
+          //  котоаря заканчивается на методе делеититем в app
+           onClick = {onDelete}>
             <i className="fa fa-trash-o"></i>
           </button>
           <i className="fa fa-heart"></i>

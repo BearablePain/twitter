@@ -1,9 +1,9 @@
 import React from 'react';
 // import postStatusFilter from '../post-status-filter/post-status-filter';
 import './post-add-form.css'
-const PostAddForm = () => {
+const PostAddForm = ({onAdd}) => {
   return (
-<form className = "bottom-panel d-flex">
+<div className = "bottom-panel d-flex">
   <input
   tepe = "text"
   placeholder = "О чем вы думаете сейчас?"
@@ -11,10 +11,12 @@ const PostAddForm = () => {
   />
   <button
     type = "submit"
-    className = "btn btn-outline-secondary">
+    className = "btn btn-outline-secondary"
+    //используем об события на кнопку
+    onClick = {() => onAdd('heloo')}>
       Добавить
   </button>
-</form>
+</div>
   )
 }
 
