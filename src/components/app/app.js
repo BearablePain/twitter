@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import AppHeader from "../app-header";
-import SearchPanel from "../search-panel/search-panel";
-import PostStatusFilter from "../post-status-filter/post-status-filter";
-import PostList from "../post-list/post-list";
-import PostAddForm from "../post-add-form/post-add-form";
+import React, { Component } from 'react';
+import AppHeader from '../app-header';
+import SearchPanel from '../search-panel/search-panel';
+import PostStatusFilter from '../post-status-filter/post-status-filter';
+import PostList from '../post-list/post-list';
+import PostAddForm from '../post-add-form/post-add-form';
 
 // import './app.css';
 // импортирование style components
-import styled from "styled-components";
+import styled from 'styled-components';
 //создание стиля через styled-component
 const AppBlock = styled.div`
   margin: 0 auto;
@@ -28,12 +28,16 @@ export default class App extends Component {
     this.state = {
       //типо получаемый массив данных из сервера
       data: [
-        { label: "1 post", important: false, id: 1 },
-        { label: "2 post", important: false, id: 2 },
-        { label: "3 post", important: false, id: 3 },
+        { label: '1 post', important: false, like: false, id: 1 },
+        { label: '2 post', important: false, like: false, id: 2 },
+        { label: '3 post', important: false, like: false, id: 3 },
       ],
+      //для поиска создаем свойство
+      term: '',
+      //по умолчанию ставим кнопку все
+      filter: 'all',
     };
-//Генератор id
+    //Генератор id
     this.maxId = 4;
   }
   // метод для удаления label, который принимает id удаляемого элемента
@@ -64,38 +68,126 @@ export default class App extends Component {
     //создаем новый элемент
     //присваиваем все нужные свойства
     //и генерируем id
-    
+
     const newItem = {
       label: body,
       important: false,
       id: this.maxId++,
     };
     //декструлизируем дату; тк мутировать нельзя то используем промежуточную переменную
-    //[...data] погает включить в newArr все те данные кторые у нас уже есть 
-    //newItem] и добавляем новый итем 
+    //[...data] помогает включить в newArr все те данные кторые у нас уже есть
+    //newItem] и добавляем новый итем
 
+    // функция для импортанта
 
-  this.setState(({data}) => {
-    const newArr = [...data, newItem]
-    return {
-      data: newArr
-    }
-  })
+    this.setState(({ data }) => {
+      const newArr = [...data, newItem];
+      return {
+        data: newArr,
+      };
+    });
   };
 
+  onToggleLike = (id) => {
+    this.setState(({ data }) => {
+      //ищем кликнутый пост
+      const index = data.findIndex((elem) => id === elem.id);
+      //записываем его в отдельную переменную
+      const likePost = data[index];
+      //создаем новый итем с измененным значением like
+      //с помощью spread operatora '...' записываем в новый итем все что было
+      //в найденном объекте но инвертируем свойство like
+      const newItem = { ...likePost, like: !likePost.like };
+      //  формируем новый массив
+      const newArr = [
+        ...data.slice(0, index),
+        newItem,
+        ...data.slice(index + 1),
+      ];
+      //возвращаем массив в data
+      return {
+        data: newArr,
+      };
+    });
+  };
+
+  onToggleImportant = (id) => {
+    this.setState(({ data }) => {
+      const index = data.findIndex((elem) => id === elem.id);
+      const importantPost = data[index];
+      const newItem = { ...importantPost, important: !importantPost.important };
+      const newArr = [
+        ...data.slice(0, index),
+        newItem,
+        ...data.slice(index + 1),
+      ];
+      return {
+        data: newArr,
+      };
+    });
+  };
+
+  //меняем term
+  onUpdateSearch = (term) => this.setState({ term });
+
+  // функция поиска поста принимает данные-items, строка поиска
+  searchPost(items, term) {
+    if (term === 0) {
+      return items;
+    }
+    //в каждом элементе находим свойство label
+    //и внутри каждого элемента будем находить то что ввел пользователь 'term'
+    //если не нашли то получаем -1/
+    //таким образом возвращаем массив который искал пользователь
+    return items.filter((item) => {
+      return item.label.indexOf(term) > -1;
+    });
+  }
+  //функция фильтрации постов
+  //если filter равен лайку получаем все элементы которые имеют лайк
+  filterPost(items, filter) {
+    switch (filter) {
+      case 'like':
+        return items.filter((item) => item.like);
+      default:
+        return items;
+    }
+  }
+  //состояние будет менять состояние на фильтер
+  onFilterSelect = (filter) => this.setState({ filter });
+
   render() {
+    const { data, term, filter } = this.state;
+    const liked = data.filter((item) => item.like).length;
+    const allPosts = data.length;
+    //формируем видимые посты на оссновании того  что ввел пользователь
+    // и обворачиваем результат в фильтр
+    const visiblePosts = this.filterPost(this.searchPost(data, term), filter);
     return (
       <AppBlock>
-        <AppHeader />
+        {/* передаем в хедер счетчики */}
+        <AppHeader liked={liked} allPosts={allPosts} />
         <div className="search-panel d-flex">
-          <SearchPanel />
-          <PostStatusFilter />
+          <SearchPanel onUpdateSearch={this.onUpdateSearch} />
+          <PostStatusFilter
+            //передаем в виде пропса фильтр
+            filter={filter}
+            //
+            onFilterSelect={this.onFilterSelect}
+          />
         </div>
         {/* передаем данные полученные с сервера в постлист */}
         <PostList
-          posts={this.state.data}
+          //передаем видимые посты
+          posts={visiblePosts}
           //здесь она выполняется и выводит в консоль
           onDelete={this.deleteItem}
+          // принимаем обработчики событий
+
+          // обработчик на important
+          onToggleImportant={this.onToggleImportant}
+          // обработчик на like
+          onToggleLike={this.onToggleLike}
         />
         {/* Передаем функцию добавление listIte, */}
         <PostAddForm onAdd={this.addItem} />

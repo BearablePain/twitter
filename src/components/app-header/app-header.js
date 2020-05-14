@@ -22,13 +22,13 @@ const Header = styled.div`
   }
 `;
 
-const AppHeader = () => {
+const AppHeader = ({liked, allPosts}) => {
   return (
     //colored это props который мы передаем в компонент
     //as позволяет переназначить тег: допоустим здесб мы из блока "div" создаем ссылку "а"
     <Header colored as='a'>
       <h1>Ivan Petrov</h1>
-      <h2>5 записей, из них понравилось 0</h2>
+      <h2>{allPosts} записей, из них понравилось {liked}</h2>
     </Header>
   );
 };
